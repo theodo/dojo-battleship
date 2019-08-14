@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div class="title">{{ title }}</div>
+    <div class="title">
+      {{ title | concat(" !") | concat2("!") | substringCustom(0, 3) }}
+    </div>
     <div
       class="grid__container"
       :style="`--rows:${rowsCount}; --columns:${columnsCount};`"
@@ -17,6 +19,11 @@ import { getCellName, getCellIndexFromName } from "../services/board-helper.js";
 
 export default {
   name: "Grid",
+  filters: {
+    concat2(value, concatValue) {
+      return value.concat(concatValue);
+    }
+  },
   props: {
     title: {
       type: String,
