@@ -1,5 +1,5 @@
 <template>
-  <div class="cell"></div>
+  <div class="cell" :class="getClass"></div>
 </template>
 
 <script>
@@ -19,11 +19,30 @@ export default {
       required: true
     },
     neighbors: {
-      type: Array,
+      type: Object,
       required: true
+    },
+    status: {
+      type: String,
+      required: true
+    }
+  },
+  computed: {
+    getClass: function() {
+      switch (this.status) {
+        case "ship":
+          return "active";
+
+        default:
+          return "";
+      }
     }
   }
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.active {
+  background-color: black;
+}
+</style>

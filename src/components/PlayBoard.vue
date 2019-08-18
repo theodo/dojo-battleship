@@ -17,11 +17,14 @@
         <div v-for="row in rowsCount" :key="'row'.concat(row)" class="line">
           <Cell
             v-for="column in columnsCount"
-            :key="getCellName(row, column)"
+            :key="getCell(row, column)"
             :neighbors="getNeighbors(row, column)"
             :row="row"
             :column="column"
-            :name="getCellName(row, column)"
+            :name="getCell(row, column)"
+            :status="
+              board[getCell(row, column)] ? board[getCell(row, column)] : ''
+            "
             class="cell"
           ></Cell>
         </div>
@@ -32,7 +35,7 @@
 
 <script>
 import {
-  getCellName,
+  getCell,
   getNeighbors,
   charCodeOffset
 } from "../services/board-helper.js";
@@ -55,6 +58,10 @@ export default {
     rowsCount: {
       type: Number,
       default: 10
+    },
+    board: {
+      type: Object,
+      required: true
     }
   },
   data: function() {
@@ -67,8 +74,9 @@ export default {
       return this.rowsCount * this.columnsCount;
     }
   },
+
   methods: {
-    getCellName,
+    getCell,
     getNeighbors
   }
 };
