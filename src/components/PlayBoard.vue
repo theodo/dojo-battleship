@@ -18,14 +18,12 @@
           <Cell
             v-for="column in columnsCount"
             :key="getCell(row, column)"
-            :neighbors="getNeighbors(row, column)"
-            :row="row"
-            :column="column"
-            :name="getCell(row, column)"
             :status="
               board[getCell(row, column)] ? board[getCell(row, column)] : ''
             "
+            :visible="shipsVisible"
             class="cell"
+            @click.native="$emit('play', getCell(row, column))"
           ></Cell>
         </div>
       </div>
@@ -34,11 +32,7 @@
 </template>
 
 <script>
-import {
-  getCell,
-  getNeighbors,
-  charCodeOffset
-} from "../services/board-helper.js";
+import { getCell, charCodeOffset } from "../services/board-helper.js";
 import Cell from "./Cell.vue";
 
 export default {
@@ -61,7 +55,13 @@ export default {
     },
     board: {
       type: Object,
-      required: true
+      default: function() {
+        return {};
+      }
+    },
+    shipsVisible: {
+      type: Boolean,
+      default: false
     }
   },
   data: function() {
@@ -76,8 +76,7 @@ export default {
   },
 
   methods: {
-    getCell,
-    getNeighbors
+    getCell
   }
 };
 </script>

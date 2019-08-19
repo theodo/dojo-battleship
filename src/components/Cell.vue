@@ -6,24 +6,12 @@
 export default {
   name: "Cell",
   props: {
-    name: {
-      type: String,
-      required: true
-    },
-    row: {
-      type: Number,
-      required: true
-    },
-    column: {
-      type: Number,
-      required: true
-    },
-    neighbors: {
-      type: Object,
-      required: true
-    },
     status: {
       type: String,
+      required: true
+    },
+    visible: {
+      type: Boolean,
       required: true
     }
   },
@@ -31,8 +19,14 @@ export default {
     getClass: function() {
       switch (this.status) {
         case "ship":
+          if (!this.visible) {
+            return "";
+          }
           return "active";
-
+        case "hit":
+          return "hit";
+        case "missed":
+          return "missed";
         default:
           return "";
       }
@@ -44,5 +38,11 @@ export default {
 <style lang="scss" scoped>
 .active {
   background-color: black;
+}
+.missed {
+  background-color: yellow;
+}
+.hit {
+  background-color: red;
 }
 </style>

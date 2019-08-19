@@ -87,7 +87,7 @@ function findAvailableCell(cells) {
   return cell;
 }
 
-function cellFitsShipConstraint(cell, cells, direction) {
+function cellFitsShipConstraint(cell, cells) {
   if (!cell) {
     return false;
   }
@@ -126,7 +126,7 @@ function findNewShipCells(shipSize, cells, startingCell) {
         direction,
         distance
       );
-      if (!cellFitsShipConstraint(cell, cells, direction)) {
+      if (!cellFitsShipConstraint(cell, cells)) {
         break;
       }
       shipCellsCandidate[cell] = "ship";
@@ -165,4 +165,18 @@ export function getRandomShips() {
   });
 
   return shipCells;
+}
+
+export function findTargetCell(cells) {
+  let cell = "";
+
+  for (let i = 0; i < iterationLimit; i++) {
+    const row = Math.floor(Math.random() * 9) + 1;
+    const column = Math.floor(Math.random() * 9) + 1;
+    cell = getCell(row, column);
+
+    if (!(cells[cell] in ["hit", "missed"])) {
+      return cell;
+    }
+  }
 }
