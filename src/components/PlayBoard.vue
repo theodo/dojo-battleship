@@ -11,7 +11,7 @@
       <div>
         <div class="line letter-line">
           <div v-for="index in columnsCount" :key="index" class="legend">
-            {{ String.fromCharCode(index - 1 + charCodeOffset) }}
+            {{ String.fromCharCode(index - 1 + CHAR_CODE_OFFSET) }}
           </div>
         </div>
         <div v-for="row in rowsCount" :key="'row'.concat(row)" class="line">
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getCell, charCodeOffset } from "../services/board-helper.js";
+import { getCell, CHAR_CODE_OFFSET } from "../services/board-helper.js";
 import Cell from "./Cell.vue";
 
 export default {
@@ -66,7 +66,7 @@ export default {
   },
   data: function() {
     return {
-      charCodeOffset: charCodeOffset
+      CHAR_CODE_OFFSET: CHAR_CODE_OFFSET
     };
   },
   computed: {

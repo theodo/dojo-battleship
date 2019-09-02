@@ -1,17 +1,17 @@
-const boardSize = 10;
-const shipsSizes = [5, 4, 3, 3, 2];
-const directions = ["up", "down", "left", "right"];
-const iterationLimit = 100;
+const BOARD_SIZE = 10;
+const SHIPS_SIZES = [5, 4, 3, 3, 2];
+const DIRECTIONS = ["up", "down", "left", "right"];
+const ITERATION_LIMIT = 100;
 
-export const charCodeOffset = 65;
+export const CHAR_CODE_OFFSET = 65;
 
 export function getCell(row, column) {
-  const columnLetter = String.fromCharCode(column - 1 + charCodeOffset);
+  const columnLetter = String.fromCharCode(column - 1 + CHAR_CODE_OFFSET);
   return columnLetter.concat(row.toString());
 }
 
 export function getCellIndexes(cell) {
-  const column = cell[0].charCodeAt(0) - charCodeOffset + 1;
+  const column = cell[0].charCodeAt(0) - CHAR_CODE_OFFSET + 1;
   const row = parseInt(cell.substr(1));
 
   return { row: row, column: column };
@@ -19,8 +19,13 @@ export function getCellIndexes(cell) {
 
 export function getNeighbors(row, column) {
   let neighbors = {};
-  directions.forEach(direction => {
-    const neighbor = getNeighborX(row, column, direction, 1);
+  DIRECTIONS.forEach(direction => {
+    const neighbor = getNeighborFromDirectionAndDistance(
+      row,
+      column,
+      direction,
+      1
+    );
     if (neighbor) {
       neighbors[direction] = neighbor;
     }
@@ -29,15 +34,16 @@ export function getNeighbors(row, column) {
   return neighbors;
 }
 
-function getNeighborX(row, column, direction, distance) {
+function getNeighborFromDirectionAndDistance(row, column, direction, distance) {
   switch (direction) {
     case "up":
       if (row - distance > 0) {
+        // check that we are not on the top border of the board
         return getCell(row - distance, column);
       }
       break;
     case "down":
-      if (row + distance <= boardSize) {
+      if (row + distance <= BOARD_SIZE) {
         return getCell(row + distance, column);
       }
       break;
@@ -47,7 +53,7 @@ function getNeighborX(row, column, direction, distance) {
       }
       break;
     case "right":
-      if (column + distance <= boardSize) {
+      if (column + distance <= BOARD_SIZE) {
         return getCell(row, column + distance);
       }
       break;
@@ -59,20 +65,19 @@ function getNeighborX(row, column, direction, distance) {
 function checkNeighborsAvailability(cell, cells) {
   const cellIndexes = getCellIndexes(cell);
   const neighbors = getNeighbors(cellIndexes.row, cellIndexes.column);
-  let neighborsNonEmptyCellCount = true;
 
   Object.keys(neighbors).forEach(direction => {
-    if (!checkCellAvailability([neighbors[direction]], cells)) {
-      neighborsNonEmptyCellCount = false;
+    if (!checkCellAvailability(neighbors[direction], cells)) {
+      return false;
     }
   });
-  return neighborsNonEmptyCellCount;
+  return true;
 }
 
 function findAvailableCell(cells) {
   let cell = "";
 
-  for (let i = 0; i < iterationLimit; i++) {
+  for (let i = 0; i < ITERATION_LIMIT; i++) {
     const row = Math.floor(Math.random() * 9) + 1;
     const column = Math.floor(Math.random() * 9) + 1;
     cell = getCell(row, column);
@@ -88,39 +93,30 @@ function findAvailableCell(cells) {
 }
 
 function cellFitsShipConstraint(cell, cells) {
-  if (!cell) {
-    return false;
-  }
-  if (!checkCellAvailability([cell], cells)) {
-    return false;
-  }
-  if (!checkNeighborsAvailability(cell, cells)) {
-    return false;
-  }
-
-  return true;
+  return (
+    !!cell &&
+    !!checkCellAvailability(cell, cells) &&
+    !!checkNeighborsAvailability(cell, cells)
+  );
 }
 
-function checkCellAvailability(candidates, cells) {
-  let cellAvailability = true;
-  candidates.forEach(candidate => {
-    if (cells.hasOwnProperty(candidate)) {
-      cellAvailability = false;
-    }
-  });
-  return cellAvailability;
+function checkCellAvailability(candidate, cells) {
+  if (cells.hasOwnProperty(candidate)) {
+    return false;
+  }
+  return true;
 }
 
 function findNewShipCells(shipSize, cells, startingCell) {
   const startingCellIndexes = getCellIndexes(startingCell);
   const shipCellsCandidates = {};
 
-  directions.forEach(direction => {
+  DIRECTIONS.forEach(direction => {
     const shipCellsCandidate = {};
     shipCellsCandidate[startingCell] = "ship";
 
     for (let distance = 1; distance < shipSize; distance++) {
-      const cell = getNeighborX(
+      const cell = getNeighborFromDirectionAndDistance(
         startingCellIndexes.row,
         startingCellIndexes.column,
         direction,
@@ -147,7 +143,7 @@ function findNewShipCells(shipSize, cells, startingCell) {
 }
 
 function addNewShipCells(shipSize, shipCells) {
-  for (let i = 0; i < iterationLimit; i++) {
+  for (let i = 0; i < ITERATION_LIMIT; i++) {
     const startingCell = findAvailableCell(shipCells);
     const newShipCells = findNewShipCells(shipSize, shipCells, startingCell);
     if (Object.keys(newShipCells).length > 0) {
@@ -160,7 +156,7 @@ function addNewShipCells(shipSize, shipCells) {
 
 export function getRandomShips() {
   let shipCells = {};
-  shipsSizes.forEach(shipSize => {
+  SHIPS_SIZES.forEach(shipSize => {
     shipCells = addNewShipCells(shipSize, shipCells);
   });
 
@@ -170,7 +166,7 @@ export function getRandomShips() {
 export function findTargetCell(cells) {
   let cell = "";
 
-  for (let i = 0; i < iterationLimit; i++) {
+  for (let i = 0; i < ITERATION_LIMIT; i++) {
     const row = Math.floor(Math.random() * 9) + 1;
     const column = Math.floor(Math.random() * 9) + 1;
     cell = getCell(row, column);
