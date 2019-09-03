@@ -1,10 +1,10 @@
 const BOARD_SIZE = 10;
 const SHIPS = {
-  boat1: 5,
-  boat2: 4,
-  boat3: 3,
-  boat4: 3,
-  boat5: 2
+  Carrier: 5,
+  Battleship: 4,
+  Cruiser: 3,
+  Submarine: 3,
+  Destroyer: 2
 };
 const DIRECTIONS = ["up", "down", "left", "right"];
 export const ITERATION_LIMIT = 100;
@@ -14,28 +14,21 @@ export const CHAR_CODE_OFFSET = 65;
 export function generateRandomBoard() {
   let boardCells = {};
   let boats = {};
+
+  for (let row = 1; row <= BOARD_SIZE; row++) {
+    for (let column = 1; column <= BOARD_SIZE; column++) {
+      boardCells[getCell(row, column)] = undefined;
+    }
+  }
+
   Object.keys(SHIPS).forEach(shipName => {
     const shipSize = SHIPS[shipName];
     const newShipCells = generateRandomBoatPosition(shipSize, boardCells);
     // TODO what happend if no board is found ?
-    boardCells = { ...newShipCells, ...boardCells };
+    boardCells = { ...boardCells, ...newShipCells };
     boats[shipName] = newShipCells;
   });
   return { boardCells, boats };
-}
-
-export function findTargetCell(cells) {
-  let cell = "";
-
-  for (let i = 0; i < ITERATION_LIMIT; i++) {
-    const row = Math.floor(Math.random() * 9) + 1;
-    const column = Math.floor(Math.random() * 9) + 1;
-    cell = getCell(row, column);
-
-    if (!(cells[cell] in ["hit", "missed"])) {
-      return cell;
-    }
-  }
 }
 
 function generateRandomBoatPosition(shipSize, boardCells) {
@@ -44,6 +37,57 @@ function generateRandomBoatPosition(shipSize, boardCells) {
     const newShipCells = findNewShipCells(shipSize, boardCells, startingCell);
     return newShipCells;
   }
+  return {};
+}
+
+function findAvailableCell(boardCells) {
+  let cell = "";
+
+  const availableCells = Object.keys(boardCells).filter(
+    key => !boardCells[key]
+  );
+  const randomIndex = Math.floor(availableCells.length * Math.random());
+
+  for (let index = 0; index < availableCells.length; index++) {
+    cell = availableCells[(index + randomIndex) % availableCells.length];
+    if (areNeighborsAvailabale(cell, boardCells)) {
+      break;
+    }
+  }
+  return cell;
+}
+function findNewShipCells(shipSize, boardCells, startingCell) {
+  const startingCellIndexes = getCellIndexes(startingCell);
+  const shipCellsCandidates = {};
+
+  DIRECTIONS.forEach(direction => {
+    const shipCellsCandidate = {};
+    shipCellsCandidate[startingCell] = "ship";
+
+    for (let distance = 1; distance < shipSize; distance++) {
+      const cell = getNeighborFromDirectionAndDistance(
+        startingCellIndexes.row,
+        startingCellIndexes.column,
+        direction,
+        distance
+      );
+      if (!isCellRespectingShipConstraints(cell, boardCells)) {
+        break;
+      }
+      shipCellsCandidate[cell] = "ship";
+    }
+    if (Object.keys(shipCellsCandidate).length === shipSize) {
+      shipCellsCandidates[direction] = shipCellsCandidate;
+    }
+  });
+
+  const directionCandidates = Object.keys(shipCellsCandidates);
+
+  if (directionCandidates.length > 0) {
+    const randomIndex = Math.floor(Math.random() * directionCandidates.length);
+    return shipCellsCandidates[directionCandidates[randomIndex]];
+  }
+
   return {};
 }
 
@@ -104,79 +148,27 @@ function getNeighborFromDirectionAndDistance(row, column, direction, distance) {
   }
 }
 
-function areNeighborsAvailabale(cell, cells) {
+function areNeighborsAvailabale(cell, boardCells) {
   const cellIndexes = getCellIndexes(cell);
   const neighbors = getNeighbors(cellIndexes.row, cellIndexes.column);
 
+  let areAvailable = true;
   Object.keys(neighbors).forEach(direction => {
-    if (!isCellAvailable(neighbors[direction], cells)) {
-      return false;
+    if (!isCellAvailable(neighbors[direction], boardCells)) {
+      areAvailable = false;
     }
   });
-  return true;
+  return areAvailable;
 }
 
-function findAvailableCell(cells) {
-  let cell = "";
-
-  for (let i = 0; i < ITERATION_LIMIT; i++) {
-    const row = Math.floor(Math.random() * 9) + 1;
-    const column = Math.floor(Math.random() * 9) + 1;
-    cell = getCell(row, column);
-
-    if (!cells.hasOwnProperty(cell) && areNeighborsAvailabale(cell, cells)) {
-      break;
-    }
-  }
-  return cell;
-}
-
-function isCellRespectingShipConstraints(cell, cells) {
+function isCellRespectingShipConstraints(cell, boardCells) {
   return (
     !!cell &&
-    isCellAvailable(cell, cells) &&
-    areNeighborsAvailabale(cell, cells)
+    isCellAvailable(cell, boardCells) &&
+    areNeighborsAvailabale(cell, boardCells)
   );
 }
 
-function isCellAvailable(candidate, cells) {
-  if (cells.hasOwnProperty(candidate)) {
-    return false;
-  }
-  return true;
-}
-
-function findNewShipCells(shipSize, cells, startingCell) {
-  const startingCellIndexes = getCellIndexes(startingCell);
-  const shipCellsCandidates = {};
-
-  DIRECTIONS.forEach(direction => {
-    const shipCellsCandidate = {};
-    shipCellsCandidate[startingCell] = "ship";
-
-    for (let distance = 1; distance < shipSize; distance++) {
-      const cell = getNeighborFromDirectionAndDistance(
-        startingCellIndexes.row,
-        startingCellIndexes.column,
-        direction,
-        distance
-      );
-      if (!isCellRespectingShipConstraints(cell, cells)) {
-        break;
-      }
-      shipCellsCandidate[cell] = "ship";
-    }
-    if (Object.keys(shipCellsCandidate).length === shipSize) {
-      shipCellsCandidates[direction] = shipCellsCandidate;
-    }
-  });
-
-  const directionCandidates = Object.keys(shipCellsCandidates);
-
-  if (directionCandidates.length > 0) {
-    const randomIndex = Math.floor(Math.random() * directionCandidates.length);
-    return shipCellsCandidates[directionCandidates[randomIndex]];
-  }
-
-  return {};
+function isCellAvailable(candidate, boardCells) {
+  return !boardCells[candidate];
 }

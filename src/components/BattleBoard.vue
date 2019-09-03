@@ -29,13 +29,19 @@ export default {
   },
   methods: {
     startGame() {
-      const {boardCells: playerCellsBoard, boats: playerBoats} = generateRandomBoard();
-      this.playerCellsBoard = playerCellsBoard
-      this.playerBoats = playerBoats
+      const {
+        boardCells: playerCellsBoard,
+        boats: playerBoats
+      } = generateRandomBoard();
+      this.playerCellsBoard = playerCellsBoard;
+      this.playerBoats = playerBoats;
 
-      const {boardCells: IACellsBoard, boats: IABoats} = generateRandomBoard();
-      this.IACellsBoard = IACellsBoard
-      this.IABoats = IABoats
+      const {
+        boardCells: IACellsBoard,
+        boats: IABoats
+      } = generateRandomBoard();
+      this.IACellsBoard = IACellsBoard;
+      this.IABoats = IABoats;
 
       this.gameStarted = true;
     },
