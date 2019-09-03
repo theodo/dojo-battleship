@@ -32,31 +32,31 @@ export function generateRandomBoard() {
 }
 
 function generateRandomBoatPosition(shipSize, boardCells) {
-  for (let i = 0; i < ITERATION_LIMIT; i++) {
-    const startingCell = findAvailableCell(boardCells);
-    const newShipCells = findNewShipCells(shipSize, boardCells, startingCell);
-    return newShipCells;
-  }
-  return {};
-}
-
-function findAvailableCell(boardCells) {
-  let cell = "";
-
   const availableCells = Object.keys(boardCells).filter(
     key => !boardCells[key]
   );
   const randomIndex = Math.floor(availableCells.length * Math.random());
 
   for (let index = 0; index < availableCells.length; index++) {
-    cell = availableCells[(index + randomIndex) % availableCells.length];
-    if (areNeighborsAvailabale(cell, boardCells)) {
-      break;
+    const startingCell =
+      availableCells[(index + randomIndex) % availableCells.length];
+
+    if (areNeighborsAvailabale(startingCell, boardCells)) {
+      const newShipCells = getNewBoatCellsFromStartingCell(
+        shipSize,
+        boardCells,
+        startingCell
+      );
+
+      if (Object.keys(newShipCells).length !== 0) {
+        return newShipCells;
+      }
     }
   }
-  return cell;
+  return {};
 }
-function findNewShipCells(shipSize, boardCells, startingCell) {
+
+function getNewBoatCellsFromStartingCell(shipSize, boardCells, startingCell) {
   const startingCellIndexes = getCellIndexes(startingCell);
   const shipCellsCandidates = {};
 
