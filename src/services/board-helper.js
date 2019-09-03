@@ -62,12 +62,12 @@ function getNeighborFromDirectionAndDistance(row, column, direction, distance) {
   }
 }
 
-function checkNeighborsAvailability(cell, cells) {
+function areNeighborsAvailabale(cell, cells) {
   const cellIndexes = getCellIndexes(cell);
   const neighbors = getNeighbors(cellIndexes.row, cellIndexes.column);
 
   Object.keys(neighbors).forEach(direction => {
-    if (!checkCellAvailability(neighbors[direction], cells)) {
+    if (!isCellAvailable(neighbors[direction], cells)) {
       return false;
     }
   });
@@ -82,25 +82,22 @@ function findAvailableCell(cells) {
     const column = Math.floor(Math.random() * 9) + 1;
     cell = getCell(row, column);
 
-    if (
-      !cells.hasOwnProperty(cell) &&
-      checkNeighborsAvailability(cell, cells)
-    ) {
+    if (!cells.hasOwnProperty(cell) && areNeighborsAvailabale(cell, cells)) {
       break;
     }
   }
   return cell;
 }
 
-function cellFitsShipConstraint(cell, cells) {
+function isCellRespectingShipConstraints(cell, cells) {
   return (
     !!cell &&
-    !!checkCellAvailability(cell, cells) &&
-    !!checkNeighborsAvailability(cell, cells)
+    isCellAvailable(cell, cells) &&
+    areNeighborsAvailabale(cell, cells)
   );
 }
 
-function checkCellAvailability(candidate, cells) {
+function isCellAvailable(candidate, cells) {
   if (cells.hasOwnProperty(candidate)) {
     return false;
   }
@@ -122,7 +119,7 @@ function findNewShipCells(shipSize, cells, startingCell) {
         direction,
         distance
       );
-      if (!cellFitsShipConstraint(cell, cells)) {
+      if (!isCellRespectingShipConstraints(cell, cells)) {
         break;
       }
       shipCellsCandidate[cell] = "ship";
