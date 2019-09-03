@@ -10,7 +10,9 @@
 
 <script>
 import PlayBoard from "./PlayBoard.vue";
-import { generateRandomBoard, findTargetCell } from "../services/board-helper.js";
+import { generateRandomBoard } from "../services/board-helper.js";
+import { findTargetCell } from "../services/board-helper.js";
+
 import Vue from "vue";
 
 export default {

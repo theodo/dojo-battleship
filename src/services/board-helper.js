@@ -7,7 +7,7 @@ const SHIPS = {
   boat5: 2
 };
 const DIRECTIONS = ["up", "down", "left", "right"];
-const ITERATION_LIMIT = 100;
+export const ITERATION_LIMIT = 100;
 
 export const CHAR_CODE_OFFSET = 65;
 
