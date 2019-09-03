@@ -1,9 +1,51 @@
 const BOARD_SIZE = 10;
-const SHIPS_SIZES = [5, 4, 3, 3, 2];
+const SHIPS = {
+  boat1: 5,
+  boat2: 4,
+  boat3: 3,
+  boat4: 3,
+  boat5: 2
+};
 const DIRECTIONS = ["up", "down", "left", "right"];
 const ITERATION_LIMIT = 100;
 
 export const CHAR_CODE_OFFSET = 65;
+
+export function generateRandomBoard() {
+  let boardCells = {};
+  let boats = {};
+  Object.keys(SHIPS).forEach(shipName => {
+    const shipSize = SHIPS[shipName];
+    const newShipCells = generateRandomBoatPosition(shipSize, boardCells);
+    // TODO what happend if no board is found ?
+    boardCells = { ...newShipCells, ...boardCells };
+    boats[shipName] = newShipCells;
+  });
+  return { boardCells, boats };
+}
+
+export function findTargetCell(cells) {
+  let cell = "";
+
+  for (let i = 0; i < ITERATION_LIMIT; i++) {
+    const row = Math.floor(Math.random() * 9) + 1;
+    const column = Math.floor(Math.random() * 9) + 1;
+    cell = getCell(row, column);
+
+    if (!(cells[cell] in ["hit", "missed"])) {
+      return cell;
+    }
+  }
+}
+
+function generateRandomBoatPosition(shipSize, boardCells) {
+  for (let i = 0; i < ITERATION_LIMIT; i++) {
+    const startingCell = findAvailableCell(boardCells);
+    const newShipCells = findNewShipCells(shipSize, boardCells, startingCell);
+    return newShipCells;
+  }
+  return {};
+}
 
 export function getCell(row, column) {
   const columnLetter = String.fromCharCode(column - 1 + CHAR_CODE_OFFSET);
@@ -137,39 +179,4 @@ function findNewShipCells(shipSize, cells, startingCell) {
   }
 
   return {};
-}
-
-function addNewShipCells(shipSize, shipCells) {
-  for (let i = 0; i < ITERATION_LIMIT; i++) {
-    const startingCell = findAvailableCell(shipCells);
-    const newShipCells = findNewShipCells(shipSize, shipCells, startingCell);
-    if (Object.keys(newShipCells).length > 0) {
-      return Object.assign(shipCells, newShipCells);
-    }
-  }
-
-  return {};
-}
-
-export function getRandomShips() {
-  let shipCells = {};
-  SHIPS_SIZES.forEach(shipSize => {
-    shipCells = addNewShipCells(shipSize, shipCells);
-  });
-
-  return shipCells;
-}
-
-export function findTargetCell(cells) {
-  let cell = "";
-
-  for (let i = 0; i < ITERATION_LIMIT; i++) {
-    const row = Math.floor(Math.random() * 9) + 1;
-    const column = Math.floor(Math.random() * 9) + 1;
-    cell = getCell(row, column);
-
-    if (!(cells[cell] in ["hit", "missed"])) {
-      return cell;
-    }
-  }
 }

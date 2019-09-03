@@ -1,17 +1,8 @@
 <template>
   <div class="battle-board">
     <div class="boards">
-      <PlayBoard
-        :title="'Player'"
-        :board="playerCellsBoard"
-        :ships-visible="true"
-      />
-      <PlayBoard
-        :title="'IA'"
-        :board="IACellsBoard"
-        :ships-visible="false"
-        @play="play"
-      />
+      <PlayBoard :title="'Player'" :board="playerCellsBoard" :ships-visible="true" />
+      <PlayBoard :title="'IA'" :board="IACellsBoard" :ships-visible="false" @play="play" />
     </div>
     <button class="start-button" @click="startGame">Start Game</button>
   </div>
@@ -19,7 +10,7 @@
 
 <script>
 import PlayBoard from "./PlayBoard.vue";
-import { getRandomShips, findTargetCell } from "../services/board-helper.js";
+import { generateRandomBoard, findTargetCell } from "../services/board-helper.js";
 import Vue from "vue";
 
 export default {
@@ -36,8 +27,14 @@ export default {
   },
   methods: {
     startGame() {
-      this.playerCellsBoard = getRandomShips();
-      this.IACellsBoard = getRandomShips();
+      const {boardCells: playerCellsBoard, boats: playerBoats} = generateRandomBoard();
+      this.playerCellsBoard = playerCellsBoard
+      this.playerBoats = playerBoats
+
+      const {boardCells: IACellsBoard, boats: IABoats} = generateRandomBoard();
+      this.IACellsBoard = IACellsBoard
+      this.IABoats = IABoats
+
       this.gameStarted = true;
     },
     async play(cell) {
