@@ -11,7 +11,7 @@
 <script>
 import PlayBoard from "./PlayBoard.vue";
 import { generateRandomBoard } from "../services/board-helper.js";
-import { findTargetCell } from "../services/board-helper.js";
+import { findTargetCell } from "../services/ia-helper.js";
 
 import Vue from "vue";
 
@@ -47,18 +47,28 @@ export default {
     },
     async play(cell) {
       if (this.gameStarted) {
-        this.shoot(cell, this.IACellsBoard);
+        this.shoot(cell, this.IACellsBoard, this.IABoats);
         await new Promise(resolve => setTimeout(resolve, 500));
         const playerTargetCell = findTargetCell(this.playerCellsBoard);
-        this.shoot(playerTargetCell, this.playerCellsBoard);
+        this.shoot(playerTargetCell, this.playerCellsBoard, this.playerBoats);
       }
     },
-    shoot(cell, board) {
-      if (board[cell] === "ship") {
-        board[cell] = "hit";
+    shoot(cell, board, boats) {
+      if (board[cell].status === "ship") {
+        const shipName = board[cell].shipName;
+        boats[shipName].nbOfAliveCells = boats[shipName].nbOfAliveCells - 1;
+
+        if (boats[shipName].nbOfAliveCells === 0) {
+          boats[shipName].cells.forEach(cell => {
+            board[cell].status = "sunk";
+          });
+        } else {
+          board[cell].status = "hit";
+        }
       }
-      if (board[cell] === undefined) {
-        Vue.set(board, cell, "missed");
+      if (board[cell].status === "empty") {
+        board[cell].status = "missed";
+        // Vue.set(board, cell, "missed");
       }
     }
   }

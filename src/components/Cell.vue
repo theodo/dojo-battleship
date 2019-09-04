@@ -27,6 +27,8 @@ export default {
           return "hit";
         case "missed":
           return "missed";
+        case "sunk":
+          return "sunk";
         default:
           return "";
       }
@@ -40,9 +42,12 @@ export default {
   background-color: black;
 }
 .missed {
-  background-color: yellow;
+  background-color: blue;
 }
 .hit {
+  background-color: yellow;
+}
+.sunk {
   background-color: red;
 }
 </style>

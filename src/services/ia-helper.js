@@ -1,6 +1,6 @@
 import { ITERATION_LIMIT, getCell } from "./board-helper";
 
-export function findTargetCell(cells) {
+export function findTargetCell(boardCells) {
   let cell = "";
 
   for (let i = 0; i < ITERATION_LIMIT; i++) {
@@ -8,7 +8,7 @@ export function findTargetCell(cells) {
     const column = Math.floor(Math.random() * 9) + 1;
     cell = getCell(row, column);
 
-    if (!(cells[cell] in ["hit", "missed"])) {
+    if (boardCells[cell].status === "empty") {
       return cell;
     }
   }

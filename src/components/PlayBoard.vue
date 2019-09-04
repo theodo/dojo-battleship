@@ -19,7 +19,7 @@
             v-for="column in columnsCount"
             :key="getCell(row, column)"
             :status="
-              board[getCell(row, column)] ? board[getCell(row, column)] : ''
+              board[getCell(row, column)] ? board[getCell(row, column)].status : ''
             "
             :visible="shipsVisible"
             class="cell"
