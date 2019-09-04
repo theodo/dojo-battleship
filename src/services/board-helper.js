@@ -1,4 +1,4 @@
-const BOARD_SIZE = 10;
+export const BOARD_SIZE = 10;
 const SHIPS = {
   Carrier: 5,
   Battleship: 4,
