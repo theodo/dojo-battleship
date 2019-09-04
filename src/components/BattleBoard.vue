@@ -24,7 +24,8 @@ export default {
     return {
       playerCellsBoard: {},
       IACellsBoard: {},
-      gameStarted: false
+      gameStarted: false,
+      humanCanPlay: true
     };
   },
   methods: {
@@ -46,29 +47,62 @@ export default {
       this.gameStarted = true;
     },
     async play(cell) {
-      if (this.gameStarted) {
-        this.shoot(cell, this.IACellsBoard, this.IABoats);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const playerTargetCell = findTargetCell(this.playerCellsBoard);
-        this.shoot(playerTargetCell, this.playerCellsBoard, this.playerBoats);
+      if (this.gameStarted && this.humanCanPlay) {
+        const {
+          canContinue: canHumanContinue,
+          isAccepted: isHumanShotAccepted
+        } = this.shoot(cell, this.IACellsBoard, this.IABoats);
+
+        if (isHumanShotAccepted && !canHumanContinue) {
+          this.humanCanPlay = false;
+
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const playerTargetCell = findTargetCell(this.playerCellsBoard);
+          let { canContinue: canIAContinue } = this.shoot(
+            playerTargetCell,
+            this.playerCellsBoard,
+            this.playerBoats
+          );
+
+          while (canIAContinue) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const playerTargetCell = findTargetCell(this.playerCellsBoard);
+
+            canIAContinue = this.shoot(
+              playerTargetCell,
+              this.playerCellsBoard,
+              this.playerBoats
+            ).canContinue;
+          }
+          this.humanCanPlay = true;
+        }
       }
     },
     shoot(cell, board, boats) {
-      if (board[cell].status === "ship") {
-        const shipName = board[cell].shipName;
-        boats[shipName].nbOfAliveCells = boats[shipName].nbOfAliveCells - 1;
+      switch (board[cell].status) {
+        case "ship":
+          const shipName = board[cell].shipName;
+          boats[shipName].nbOfAliveCells = boats[shipName].nbOfAliveCells - 1;
 
-        if (boats[shipName].nbOfAliveCells === 0) {
-          boats[shipName].cells.forEach(cell => {
-            board[cell].status = "sunk";
-          });
-        } else {
-          board[cell].status = "hit";
-        }
-      }
-      if (board[cell].status === "empty") {
-        board[cell].status = "missed";
-        // Vue.set(board, cell, "missed");
+          if (boats[shipName].nbOfAliveCells === 0) {
+            boats[shipName].cells.forEach(cell => {
+              board[cell].status = "sunk";
+            });
+          } else {
+            board[cell].status = "hit";
+          }
+          return { canContinue: true, isAccepted: true };
+
+          break;
+        case "empty":
+          board[cell].status = "missed";
+          // Vue.set(board, cell, "missed");
+          return { canContinue: false, isAccepted: true };
+
+          break;
+        default:
+          return { canContinue: false, isAccepted: false };
+          break;
       }
     }
   }
