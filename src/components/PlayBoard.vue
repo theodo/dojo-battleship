@@ -11,18 +11,19 @@
       <div>
         <div class="line letter-line">
           <div v-for="index in columnsCount" :key="index" class="legend">
-            {{ String.fromCharCode(index - 1 + charCodeOffset) }}
+            {{ String.fromCharCode(index - 1 + CHAR_CODE_OFFSET) }}
           </div>
         </div>
         <div v-for="row in rowsCount" :key="'row'.concat(row)" class="line">
           <Cell
             v-for="column in columnsCount"
-            :key="getCellName(row, column)"
-            :neighbors="getNeighbors(row, column)"
-            :row="row"
-            :column="column"
-            :name="getCellName(row, column)"
+            :key="getCell(row, column)"
+            :status="
+              board[getCell(row, column)] ? board[getCell(row, column)].status : ''
+            "
+            :visible="shipsVisible"
             class="cell"
+            @click.native="$emit('play', getCell(row, column))"
           ></Cell>
         </div>
       </div>
@@ -31,11 +32,7 @@
 </template>
 
 <script>
-import {
-  getCellName,
-  getNeighbors,
-  charCodeOffset
-} from "../services/board-helper.js";
+import { getCell, CHAR_CODE_OFFSET } from "../services/board-helper.js";
 import Cell from "./Cell.vue";
 
 export default {
@@ -55,11 +52,21 @@ export default {
     rowsCount: {
       type: Number,
       default: 10
+    },
+    board: {
+      type: Object,
+      default: function() {
+        return {};
+      }
+    },
+    shipsVisible: {
+      type: Boolean,
+      default: false
     }
   },
   data: function() {
     return {
-      charCodeOffset: charCodeOffset
+      CHAR_CODE_OFFSET: CHAR_CODE_OFFSET
     };
   },
   computed: {
@@ -67,9 +74,9 @@ export default {
       return this.rowsCount * this.columnsCount;
     }
   },
+
   methods: {
-    getCellName,
-    getNeighbors
+    getCell
   }
 };
 </script>
