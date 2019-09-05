@@ -11,6 +11,7 @@
 <script>
 import PlayBoard from "./PlayBoard.vue";
 import { generateRandomBoard } from "../services/board-helper.js";
+import { shoot } from "../services/play-helper.js";
 import { findTargetCell } from "../services/ia-helper.js";
 
 import Vue from "vue";
@@ -48,61 +49,21 @@ export default {
     },
     async play(cell) {
       if (this.gameStarted && this.humanCanPlay) {
-        const {
-          canContinue: canHumanContinue,
-          isAccepted: isHumanShotAccepted
-        } = this.shoot(cell, this.IACellsBoard, this.IABoats);
+        const isHumanShotAccepted = shoot(
+          cell,
+          this.IACellsBoard,
+          this.IABoats
+        );
 
-        if (isHumanShotAccepted && !canHumanContinue) {
+        if (isHumanShotAccepted) {
           this.humanCanPlay = false;
 
           await new Promise(resolve => setTimeout(resolve, 500));
           const playerTargetCell = findTargetCell(this.playerCellsBoard);
-          let { canContinue: canIAContinue } = this.shoot(
-            playerTargetCell,
-            this.playerCellsBoard,
-            this.playerBoats
-          );
+          shoot(playerTargetCell, this.playerCellsBoard, this.playerBoats);
 
-          while (canIAContinue) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            const playerTargetCell = findTargetCell(this.playerCellsBoard);
-
-            canIAContinue = this.shoot(
-              playerTargetCell,
-              this.playerCellsBoard,
-              this.playerBoats
-            ).canContinue;
-          }
           this.humanCanPlay = true;
         }
-      }
-    },
-    shoot(cell, board, boats) {
-      switch (board[cell].status) {
-        case "ship":
-          const shipName = board[cell].shipName;
-          boats[shipName].nbOfAliveCells = boats[shipName].nbOfAliveCells - 1;
-
-          if (boats[shipName].nbOfAliveCells === 0) {
-            boats[shipName].cells.forEach(cell => {
-              board[cell].status = "sunk";
-            });
-          } else {
-            board[cell].status = "hit";
-          }
-          return { canContinue: true, isAccepted: true };
-
-          break;
-        case "empty":
-          board[cell].status = "missed";
-          // Vue.set(board, cell, "missed");
-          return { canContinue: false, isAccepted: true };
-
-          break;
-        default:
-          return { canContinue: false, isAccepted: false };
-          break;
       }
     }
   }

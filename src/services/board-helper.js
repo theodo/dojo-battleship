@@ -49,7 +49,7 @@ function generateRandomBoatPosition(shipSize, shipName, boardCells) {
     const startingCell =
       availableCells[(index + randomIndex) % availableCells.length];
 
-    if (areNeighborsAvailabale(startingCell, boardCells)) {
+    if (areNeighborsAvailable(startingCell, boardCells)) {
       const newShipCells = getNewBoatCellsFromStartingCell(
         shipSize,
         shipName,
@@ -162,7 +162,7 @@ function getNeighborFromDirectionAndDistance(row, column, direction, distance) {
   }
 }
 
-function areNeighborsAvailabale(cell, boardCells) {
+function areNeighborsAvailable(cell, boardCells) {
   const cellIndexes = getCellIndexes(cell);
   const neighbors = getNeighbors(cellIndexes.row, cellIndexes.column);
 
@@ -179,7 +179,7 @@ function isCellRespectingShipConstraints(cell, boardCells) {
   return (
     !!cell &&
     isCellAvailable(cell, boardCells) &&
-    areNeighborsAvailabale(cell, boardCells)
+    areNeighborsAvailable(cell, boardCells)
   );
 }
 
