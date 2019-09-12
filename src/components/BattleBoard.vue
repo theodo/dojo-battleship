@@ -12,7 +12,7 @@
 import PlayBoard from "./PlayBoard.vue";
 import { generateRandomBoard } from "../services/board-helper.js";
 import { shoot } from "../services/play-helper.js";
-import { findTargetCell } from "../services/ia-helper.js";
+import { findTargetCellV2 } from "../services/ia-helper.js";
 
 import Vue from "vue";
 
@@ -59,7 +59,7 @@ export default {
           this.humanCanPlay = false;
 
           await new Promise(resolve => setTimeout(resolve, 500));
-          const playerTargetCell = findTargetCell(this.playerCellsBoard);
+          const playerTargetCell = findTargetCellV2(this.playerCellsBoard);
           shoot(playerTargetCell, this.playerCellsBoard, this.playerBoats);
 
           this.humanCanPlay = true;
