@@ -19,10 +19,7 @@ export default {
     getClass: function() {
       switch (this.status) {
         case "ship":
-          if (!this.visible) {
-            return "";
-          }
-          return "active";
+          return this.visible ? "active" : "";
         case "hit":
           return "hit";
         case "missed":
