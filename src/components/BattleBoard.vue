@@ -31,7 +31,9 @@ export default {
   data: function() {
     return {
       playerCellsBoard: {},
+      playerBoats: {},
       IACellsBoard: {},
+      IABoats: {},
       gameStarted: false,
       humanCanPlay: true
     };
