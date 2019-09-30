@@ -1,20 +1,11 @@
 <template>
   <div class="battle-board">
-    <div v-if="winner" class="end-game-message" :class="this.winner">
-      {{ this.winner }} wins !!!
-    </div>
+    <div v-if="winner" class="end-game-message" :class="this.winner">{{ this.winner }} wins !!!</div>
     <div v-else class="boards">
-      <PlayBoard
-        title="Player"
-        :board="playerCellsBoard"
-        :ships-visible="true"
-      />
-      <PlayBoard
-        title="IA"
-        :board="IACellsBoard"
-        :ships-visible="false"
-        @play="play"
-      />
+      <Boats :boats="playerBoats" />
+      <PlayBoard title="Player" :board="playerCellsBoard" :ships-visible="true" />
+      <PlayBoard title="IA" :board="IACellsBoard" :ships-visible="false" @play="play" />
+      <Boats :boats="IABoats" />
     </div>
     <button class="start-button" @click="startGame">Start Game</button>
   </div>
@@ -22,6 +13,7 @@
 
 <script>
 import PlayBoard from "./PlayBoard.vue";
+import Boats from "./Boats.vue";
 import { generateRandomBoard } from "../services/board-helper.js";
 import { shoot } from "../services/play-helper.js";
 import { findTargetCellV2 } from "../services/ia-helper.js";
@@ -29,7 +21,8 @@ import { findTargetCellV2 } from "../services/ia-helper.js";
 export default {
   name: "BattleBoard",
   components: {
-    PlayBoard
+    PlayBoard,
+    Boats
   },
   data: function() {
     return {
