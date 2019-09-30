@@ -1,6 +1,9 @@
 <template>
   <div class="battle-board">
-    <div class="boards">
+    <div v-if="winner" class="end-game-message" :class="this.winner">
+      {{ this.winner }} wins !!!
+    </div>
+    <div v-else class="boards">
       <PlayBoard
         title="Player"
         :board="playerCellsBoard"
@@ -35,7 +38,8 @@ export default {
       IACellsBoard: {},
       IABoats: {},
       gameStarted: false,
-      humanCanPlay: true
+      humanCanPlay: false,
+      winner: null
     };
   },
   methods: {
@@ -54,7 +58,9 @@ export default {
       this.IACellsBoard = IACellsBoard;
       this.IABoats = IABoats;
 
+      this.winner = null;
       this.gameStarted = true;
+      this.humanCanPlay = true;
     },
     async play(cell) {
       if (this.gameStarted && this.humanCanPlay) {
@@ -63,14 +69,18 @@ export default {
           this.IACellsBoard,
           this.IABoats
         );
-
+        if (this.IABoats.aliveShipsCount === 0) {
+          this.winner = "Player";
+        }
         if (isHumanShotAccepted) {
           this.humanCanPlay = false;
 
           await new Promise(resolve => setTimeout(resolve, 500));
           const playerTargetCell = findTargetCellV2(this.playerCellsBoard);
           shoot(playerTargetCell, this.playerCellsBoard, this.playerBoats);
-
+          if (this.playerBoats.aliveShipsCount === 0) {
+            this.winner = "IA";
+          }
           this.humanCanPlay = true;
         }
       }
@@ -87,5 +97,17 @@ export default {
   display: flex;
   justify-content: space-around;
   margin-bottom: 30px;
+}
+.end-game-message {
+  font-size: 100px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+.Player {
+  color: green;
+}
+.IA {
+  color: red;
 }
 </style>

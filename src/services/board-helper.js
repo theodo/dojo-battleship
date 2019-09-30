@@ -14,7 +14,7 @@ export const CHAR_CODE_OFFSET = 65;
 
 export function generateRandomBoard() {
   let boardCells = {};
-  let boats = {};
+  let boats = { aliveShipsCount: 0 };
 
   for (let row = 1; row <= BOARD_SIZE; row++) {
     for (let column = 1; column <= BOARD_SIZE; column++) {
@@ -35,6 +35,7 @@ export function generateRandomBoard() {
       nbOfAliveCells: Object.keys(newShipCells).length,
       cells: Object.keys(newShipCells)
     };
+    boats.aliveShipsCount += 1;
   });
   return { boardCells, boats };
 }

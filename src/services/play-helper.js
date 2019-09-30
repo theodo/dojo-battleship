@@ -8,6 +8,7 @@ export function shoot(cell, board, boats) {
         boats[shipName].cells.forEach(cell => {
           board[cell].status = "sunk";
         });
+        boats.aliveShipsCount -= 1;
       } else {
         board[cell].status = "hit";
       }
