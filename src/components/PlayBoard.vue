@@ -113,6 +113,9 @@ export default {
   }
   height: 3vw;
   width: 3vw;
+  position: relative;
+  perspective: 800px;
+  cursor: pointer;
 }
 .legend {
   height: 3vw;
