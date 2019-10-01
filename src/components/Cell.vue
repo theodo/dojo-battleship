@@ -1,5 +1,5 @@
 <template>
-  <div class="cell" :class="getClass"></div>
+  <div class="cell" :class="[status, { hidden: !visible }]"></div>
 </template>
 
 <script>
@@ -14,29 +14,16 @@ export default {
       type: Boolean,
       required: true
     }
-  },
-  computed: {
-    getClass: function() {
-      switch (this.status) {
-        case "ship":
-          return this.visible ? "active" : "";
-        case "hit":
-          return "hit";
-        case "missed":
-          return "missed";
-        case "sunk":
-          return "sunk";
-        default:
-          return "";
-      }
-    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.active {
+.ship {
   background-color: black;
+}
+.ship.hidden {
+  background-color: unset;
 }
 .missed {
   background-color: blue;
