@@ -1,10 +1,21 @@
 <template>
   <div class="battle-board">
-    <div v-if="winner" class="end-game-message" :class="this.winner">{{ this.winner }} wins !!!</div>
+    <div v-if="winner" class="end-game-message" :class="this.winner">
+      {{ this.winner }} wins !!!
+    </div>
     <div v-else class="boards">
       <Boats :boats="playerBoats" />
-      <PlayBoard title="Player" :board="playerCellsBoard" :ships-visible="true" />
-      <PlayBoard title="IA" :board="IACellsBoard" :ships-visible="false" @play="play" />
+      <PlayBoard
+        title="Player"
+        :board="playerCellsBoard"
+        :ships-visible="true"
+      />
+      <PlayBoard
+        title="IA"
+        :board="IACellsBoard"
+        :ships-visible="false"
+        @play="play"
+      />
       <Boats :boats="IABoats" />
     </div>
     <button class="start-button" @click="startGame">Start Game</button>

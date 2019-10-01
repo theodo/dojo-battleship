@@ -4,8 +4,10 @@
       <li
         v-for="boat in boatsInfos"
         :key="boat.name"
-        v-bind:class="{sunk: boat.isSunk}"
-      >{{boat.name}} ({{boat.nbCells}})</li>
+        :class="{ sunk: boat.isSunk }"
+      >
+        {{ boat.name }} ({{ boat.nbCells }})
+      </li>
     </ol>
   </div>
 </template>
