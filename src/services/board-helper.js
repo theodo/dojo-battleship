@@ -12,7 +12,7 @@ export const ITERATION_LIMIT = 100;
 
 export const CHAR_CODE_OFFSET = 65;
 
-export function generateRandomBoard() {
+export function generateRandomAssets() {
   let boardCells = {};
   let boats = { aliveShipsCount: 0 };
 

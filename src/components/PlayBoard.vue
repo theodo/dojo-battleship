@@ -11,19 +11,15 @@
       <div>
         <div class="line letter-line">
           <div v-for="index in columnsCount" :key="index" class="legend">
-            {{ String.fromCharCode(index - 1 + CHAR_CODE_OFFSET) }}
+            {{ getColumnLegend(index) }}
           </div>
         </div>
         <div v-for="row in rowsCount" :key="'row'.concat(row)" class="line">
           <Cell
             v-for="column in columnsCount"
             :key="getCell(row, column)"
-            :status="
-              board[getCell(row, column)]
-                ? board[getCell(row, column)].status
-                : ''
-            "
-            :visible="shipsVisible"
+            :status="getCellStatus(row, column)"
+            :visible="shouldDisplayShips"
             class="cell"
             @click.native="$emit('play', getCell(row, column))"
           ></Cell>
@@ -61,7 +57,7 @@ export default {
         return {};
       }
     },
-    shipsVisible: {
+    shouldDisplayShips: {
       type: Boolean,
       default: false
     }
@@ -78,7 +74,15 @@ export default {
   },
 
   methods: {
-    getCell
+    getCell,
+    getColumnLegend(index) {
+      return String.fromCharCode(index - 1 + CHAR_CODE_OFFSET);
+    },
+    getCellStatus(row, column) {
+      return this.board[this.getCell(row, column)]
+        ? this.board[this.getCell(row, column)].status
+        : "";
+    }
   }
 };
 </script>

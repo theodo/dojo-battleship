@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <div class="title">BATTLESHIP</div>
     <BattleBoard />
   </div>
 </template>
@@ -16,10 +15,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.title {
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-</style>
+<style lang="scss" scoped></style>
