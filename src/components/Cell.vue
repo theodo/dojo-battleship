@@ -1,5 +1,7 @@
 <template>
-  <div class="cell" :class="[status, { hidden: !visible }]"></div>
+  <div class="cell">
+    <div class="card" :class="[status, { hidden: !visible }]" />
+  </div>
 </template>
 
 <script>
@@ -19,19 +21,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ship {
+.card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+}
+.card.ship {
   background-color: black;
 }
-.ship.hidden {
+
+.card.ship.hidden {
   background-color: unset;
 }
-.missed {
-  background-color: blue;
+.card.missed {
+  background-color: aqua;
+  transform: rotateY(180deg);
 }
-.hit {
+.card.hit {
   background-color: yellow;
+  transform: rotateY(180deg);
 }
-.sunk {
+.card.sunk {
   background-color: red;
+  transform: rotateY(180deg);
 }
 </style>
