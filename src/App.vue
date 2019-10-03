@@ -1,10 +1,17 @@
 <template>
-  <div id="app"></div>
+  <div id="app">
+    <BattleBoard />
+  </div>
 </template>
 
 <script>
+import BattleBoard from "./components/BattleBoard.vue";
+
 export default {
-  name: "App"
+  name: "App",
+  components: {
+    BattleBoard
+  }
 };
 </script>
 
