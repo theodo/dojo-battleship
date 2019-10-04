@@ -29,6 +29,12 @@ export default {
     rowsCount: {
       type: Number,
       default: 10
+    },
+    boardCells: {
+      type: Object,
+      default: function() {
+        return {};
+      }
     }
   }
 };
