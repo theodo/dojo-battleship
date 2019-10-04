@@ -8,7 +8,7 @@
           v-for="column in columnsCount"
           :key="''.concat(column).concat('-'.concat(row))"
           class="cell"
-          :class="[getCellStatus(row, column)]"
+          :class="[getCellStatus(row, column), { hidden: !shouldDisplayShips }]"
         ></div>
       </div>
     </div>
@@ -38,6 +38,10 @@ export default {
       default: function() {
         return {};
       }
+    },
+    shouldDisplayShips: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {
