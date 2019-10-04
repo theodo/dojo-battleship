@@ -3,7 +3,11 @@
     <div class="battle-board">
       <div class="title">BATTLESHIP</div>
 
-      <div class="boards-container">
+      <div v-if="winner" class="end-game-message" :class="winner">
+        {{ winner }} wins !!!
+      </div>
+
+      <div v-else class="boards-container">
         <PlayBoard
           title="Player"
           :rows-count="10"
@@ -46,7 +50,8 @@ export default {
         boats: {}
       },
       gameStarted: false,
-      humanCanPlay: false
+      humanCanPlay: false,
+      winner: null
     };
   },
   methods: {
@@ -55,6 +60,7 @@ export default {
       this.setAssets(this.IAAssets);
       this.humanCanPlay = true;
       this.gameStarted = true;
+      this.winner = null;
     },
     setAssets(target) {
       const targetRandomAssets = generateRandomAssets();
@@ -68,7 +74,9 @@ export default {
           this.IAAssets.boardCells,
           this.IAAssets.boats
         );
-
+        if (this.IAAssets.boats.aliveShipsCount === 0) {
+          this.winner = "Player";
+        }
         if (isHumanShotAccepted) {
           this.humanCanPlay = false;
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -78,6 +86,9 @@ export default {
             this.playerAssets.boardCells,
             this.playerAssets.boats
           );
+          if (this.playerAssets.boats.aliveShipsCount === 0) {
+            this.winner = "IAAssets";
+          }
           this.humanCanPlay = true;
         }
       }
@@ -99,5 +110,17 @@ export default {
   display: flex;
   justify-content: space-around;
   margin-bottom: 30px;
+}
+.end-game-message {
+  font-size: 100px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+.Player {
+  color: green;
+}
+.IA {
+  color: red;
 }
 </style>
