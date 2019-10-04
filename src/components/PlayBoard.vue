@@ -9,6 +9,7 @@
           :key="''.concat(column).concat('-'.concat(row))"
           class="cell"
           :class="[getCellStatus(row, column), { hidden: !shouldDisplayShips }]"
+          @click="$emit('play', getCell(row, column))"
         ></div>
       </div>
     </div>
