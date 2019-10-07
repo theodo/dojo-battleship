@@ -18,11 +18,28 @@
       />
     </div>
     <button class="start-button" @click="startGame">Start Game</button>
+    <div class="cells-line-legend">
+      <Cell :status="'ship'" :visible="true" class="cell"></Cell>
+      <div>Bateau</div>
+    </div>
+    <div class="cells-line-legend">
+      <Cell :status="'missed'" :visible="true" class="cell"></Cell>
+      <div>A l'eau</div>
+    </div>
+    <div class="cells-line-legend">
+      <Cell :status="'hit'" :visible="true" class="cell"></Cell>
+      <div>Touché</div>
+    </div>
+    <div class="cells-line-legend">
+      <Cell :status="'sunk'" :visible="true" class="cell"></Cell>
+      <div>Coulé</div>
+    </div>
   </div>
 </template>
 
 <script>
 import PlayBoard from "./PlayBoard.vue";
+import Cell from "./Cell.vue";
 import { generateRandomAssets } from "../services/board-helper.js";
 import { shoot } from "../services/play-helper.js";
 import { findTargetCellV2 } from "../services/ia-helper.js";
@@ -31,7 +48,8 @@ import Vue from "vue";
 export default {
   name: "BattleBoard",
   components: {
-    PlayBoard
+    PlayBoard,
+    Cell
   },
   data: function() {
     return {
@@ -117,5 +135,16 @@ export default {
 }
 .IA {
   color: red;
+}
+.cells-line-legend > div {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.cell {
+  margin-top: 10px;
+  margin-right: 10px;
+  border: 1px solid black;
+  height: 1vw;
+  width: 1vw;
 }
 </style>
