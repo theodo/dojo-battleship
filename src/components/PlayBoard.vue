@@ -15,14 +15,16 @@
           </div>
         </div>
         <div v-for="row in rowsCount" :key="'row'.concat(row)" class="line">
-          <Cell
+          <div
             v-for="column in columnsCount"
             :key="getCell(row, column)"
-            :status="getCellStatus(row, column)"
-            :visible="shouldDisplayShips"
             class="cell"
-            @click.native="$emit('play', getCell(row, column))"
-          ></Cell>
+            :class="[
+              getCellStatus(row, column),
+              { hidden: !shouldDisplayShips }
+            ]"
+            @click="$emit('play', getCell(row, column))"
+          ></div>
         </div>
       </div>
     </div>
@@ -31,13 +33,9 @@
 
 <script>
 import { getCell, CHAR_CODE_OFFSET } from "../services/board-helper.js";
-import Cell from "./Cell.vue";
 
 export default {
   name: "PlayBoard",
-  components: {
-    Cell
-  },
   props: {
     title: {
       type: String,
@@ -66,11 +64,6 @@ export default {
     return {
       CHAR_CODE_OFFSET: CHAR_CODE_OFFSET
     };
-  },
-  computed: {
-    cellsCount() {
-      return this.rowsCount * this.columnsCount;
-    }
   },
 
   methods: {
@@ -129,5 +122,21 @@ export default {
 }
 .column {
   padding-top: 3vw;
+}
+
+.ship {
+  background-color: black;
+}
+.ship.hidden {
+  background-color: unset;
+}
+.missed {
+  background-color: blue;
+}
+.hit {
+  background-color: yellow;
+}
+.sunk {
+  background-color: red;
 }
 </style>
