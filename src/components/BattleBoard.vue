@@ -25,6 +25,8 @@
 <script>
 import PlayBoard from "./PlayBoard.vue";
 import { generateRandomAssets } from "../services/board-helper.js";
+import { shoot } from "../services/play-helper.js";
+import { findTargetCell } from "../services/ia-helper.js";
 
 export default {
   name: "BattleBoard",
@@ -42,6 +44,7 @@ export default {
         boats: {},
       },
       gameStarted: false,
+      humanCanPlay: false,
     };
   },
   methods: {
@@ -49,11 +52,33 @@ export default {
       this.setAssets(this.playerAssets);
       this.setAssets(this.IAAssets);
       this.gameStarted = true;
+      this.humanCanPlay = true;
     },
     setAssets(target) {
       const targetRandomAssets = generateRandomAssets();
       target["boardCells"] = targetRandomAssets.boardCells;
       target["boats"] = targetRandomAssets.boats;
+    },
+    async play(cell) {
+      if (this.gameStarted && this.humanCanPlay) {
+        const isHumanShotAccepted = shoot(
+          cell,
+          this.IAAssets.boardCells,
+          this.IAAssets.boats,
+        );
+
+        if (isHumanShotAccepted) {
+          this.humanCanPlay = false;
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          const playerTargetCell = findTargetCell(this.playerAssets.boardCells);
+          shoot(
+            playerTargetCell,
+            this.playerAssets.boardCells,
+            this.playerAssets.boats,
+          );
+          this.humanCanPlay = true;
+        }
+      }
     },
   },
 };
