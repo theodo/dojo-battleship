@@ -2,7 +2,12 @@
   <div>
     <div class="battle-board">
       <div class="title">BATTLESHIP</div>
-      <div class="boards-container">
+
+      <div v-if="winner" class="end-game-message" :class="winner">
+        {{ winner }} wins !!!
+      </div>
+
+      <div v-else class="boards-container">
         <PlayBoard
           title="Player"
           :rows-count="10"
@@ -45,6 +50,7 @@ export default {
       },
       gameStarted: false,
       humanCanPlay: false,
+      winner: null,
     };
   },
   methods: {
@@ -53,6 +59,7 @@ export default {
       this.setAssets(this.IAAssets);
       this.gameStarted = true;
       this.humanCanPlay = true;
+      this.winner = null;
     },
     setAssets(target) {
       const targetRandomAssets = generateRandomAssets();
@@ -66,6 +73,9 @@ export default {
           this.IAAssets.boardCells,
           this.IAAssets.boats,
         );
+        if (this.IAAssets.boats.aliveShipsCount === 0) {
+          this.winner = "Player";
+        }
 
         if (isHumanShotAccepted) {
           this.humanCanPlay = false;
@@ -76,6 +86,9 @@ export default {
             this.playerAssets.boardCells,
             this.playerAssets.boats,
           );
+          if (this.playerAssets.boats.aliveShipsCount === 0) {
+            this.winner = "IAAssets";
+          }
           this.humanCanPlay = true;
         }
       }
