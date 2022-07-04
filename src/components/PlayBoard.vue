@@ -29,6 +29,12 @@ export default {
       type: Number,
       default: 10,
     },
+    boardCells: {
+      type: Object,
+      default: function () {
+        return {};
+      },
+    },
   },
 };
 </script>
