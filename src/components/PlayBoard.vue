@@ -7,6 +7,7 @@
           v-for="column in columnsCount"
           :key="''.concat(column).concat('-'.concat(row))"
           class="cell"
+          :class="[getCellStatus(row, column)]"
         ></div>
       </div>
     </div>
@@ -14,6 +15,8 @@
 </template>
 
 <script>
+import { getCell } from "../services/board-helper.js";
+
 export default {
   name: "PlayBoard",
   props: {
@@ -34,6 +37,14 @@ export default {
       default: function () {
         return {};
       },
+    },
+  },
+  methods: {
+    getCell,
+    getCellStatus(row, column) {
+      return this.boardCells[this.getCell(row, column)]
+        ? this.boardCells[this.getCell(row, column)].status
+        : "";
     },
   },
 };
@@ -70,5 +81,21 @@ export default {
   }
   height: 3vw;
   width: 3vw;
+}
+
+.ship {
+  background-color: black;
+}
+.ship.hidden {
+  background-color: unset;
+}
+.missed {
+  background-color: blue;
+}
+.hit {
+  background-color: yellow;
+}
+.sunk {
+  background-color: red;
 }
 </style>
