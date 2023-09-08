@@ -1,0 +1,39 @@
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  merge_group:
+    types: [checks_requested]
+
+# cancel previous runs on the same PR
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+name: ⛷ PR tests
+
+env:
+  CI: true
+  TARGET_SHA: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-format-lint-test:
+    name: 🚀 Build, lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: "📥️ Checkout"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.TARGET_SHA }}
+      - name: "⚙️📦️ Install & cache node dependencies"
+        uses: ./.github/actions/install-node-deps
+      - name: "⚙️🛠️ Build"
+        run: yarn build
+      - name: "🧪🖼️ Test linter"
+        run: yarn test:lint
+      - name: "🧪🔬 Run unit tests"
+        run: yarn test:unit
