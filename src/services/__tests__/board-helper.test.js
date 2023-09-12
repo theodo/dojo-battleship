@@ -11,8 +11,7 @@ describe("getCell", () => {
   it("should return the correct case id for B1", () => {
     expect(getCell(1, 2)).toBe("B1");
   });
-  // Incorrect test
-  it("should return the correct case id for F10", () => {
-    expect(getCell(10, 10)).toBe("F10");
+  it("should return the correct case id for J10", () => {
+    expect(getCell(10, 10)).toBe("J10");
   });
 });
