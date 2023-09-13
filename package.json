@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "./.scripts/deploy.sh",
     "preview": "vite preview --port 4173",
     "test:lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore",
     "test:unit": "vitest --environment jsdom",
